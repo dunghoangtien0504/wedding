@@ -1964,7 +1964,7 @@ footer .footer-bow {
     <div class="disk"></div>
     <div class="eq-bars"><span></span><span></span><span></span></div>
     <span class="music-lbl">Music</span>
-    <audio id="bg-music" loop>
+    <audio id="bg-music" autoplay loop>
         <source src="music.mp3" type="audio/mpeg">
     </audio>
 </div>
@@ -2484,7 +2484,7 @@ player.addEventListener('click', togglePlay);
 player.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') { e.preventDefault(); togglePlay(e); } });
 
 // Smart Autoplay Listeners
-const autoplayEvents = ['click', 'touchstart', 'scroll', 'keydown'];
+const autoplayEvents = ['click', 'touchstart', 'scroll', 'keydown', 'mousedown', 'pointerdown'];
 function handleAutoplay() {
     playMusic();
 }
@@ -2499,11 +2499,9 @@ function removeAutoplayListeners() {
     });
 }
 
-// Try playing immediately
-window.addEventListener('load', () => {
-    addAutoplayListeners();
-    playMusic();
-});
+// Start listeners and try to play aggressively right away!
+addAutoplayListeners();
+playMusic();
 
 // ═══ Scroll progress + parallax + reveal ═══
 const io = new IntersectionObserver(entries => {
