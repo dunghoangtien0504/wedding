@@ -258,7 +258,7 @@
         <div class="music-disk">♪</div>
         <div style="font-size: 9px; text-transform: uppercase; letter-spacing: 0.2em;">Audio</div>
         <audio id="bg-music" loop>
-            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
+            <source src="music.mp3" type="audio/mpeg">
         </audio>
     </div>
 
@@ -382,20 +382,57 @@
             if (heroImg) heroImg.style.transform = `scale(1.1) translateY(${scrolled * 0.3}px)`;
         });
 
-        // Music
+        // Music & Smart Autoplay
         const musicPlayer = document.getElementById('music-player');
         const audio = document.getElementById('bg-music');
         let isPlaying = false;
 
-        musicPlayer.addEventListener('click', () => {
-            if (isPlaying) {
-                audio.pause();
-                musicPlayer.classList.remove('playing');
-            } else {
-                audio.play();
+        function playMusic() {
+            if (isPlaying) return;
+            audio.play().then(() => {
+                isPlaying = true;
                 musicPlayer.classList.add('playing');
+                removeAutoplayListeners();
+            }).catch(err => {
+                console.log("Autoplay blocked. Awaiting user interaction.", err);
+            });
+        }
+
+        function pauseMusic() {
+            audio.pause();
+            isPlaying = false;
+            musicPlayer.classList.remove('playing');
+        }
+
+        musicPlayer.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (isPlaying) {
+                pauseMusic();
+            } else {
+                playMusic();
             }
-            isPlaying = !isPlaying;
+        });
+
+        // Smart Autoplay Listeners
+        const autoplayEvents = ['click', 'touchstart', 'scroll', 'keydown'];
+        function handleAutoplay() {
+            playMusic();
+        }
+        function addAutoplayListeners() {
+            autoplayEvents.forEach(event => {
+                document.addEventListener(event, handleAutoplay, { passive: true });
+            });
+        }
+        function removeAutoplayListeners() {
+            autoplayEvents.forEach(event => {
+                document.removeEventListener(event, handleAutoplay);
+            });
+        }
+
+        // Try playing immediately
+        window.addEventListener('load', () => {
+            addAutoplayListeners();
+            playMusic();
         });
     </script>
 </body>

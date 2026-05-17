@@ -215,7 +215,7 @@
     <!-- UI -->
     <div id="audio-control">
         <span style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.2em;">Play Soundtrack</span>
-        <audio id="bg-audio" loop><source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"></audio>
+        <audio id="bg-audio" loop><source src="music.mp3" type="audio/mpeg"></audio>
     </div>
 
     <div class="progress-nav">
@@ -362,13 +362,61 @@
             gsap.to(follower, { x: e.clientX - 16, y: e.clientY - 16, duration: 0.3 });
         });
 
-        // Audio
+        // Audio & Smart Autoplay
         let playing = false;
         const audio = document.getElementById('bg-audio');
-        function startAudio() { audio.play(); playing = true; }
-        document.getElementById('audio-control').addEventListener('click', () => {
-            if (playing) audio.pause(); else audio.play();
-            playing = !playing;
+        const audioControl = document.getElementById('audio-control');
+
+        function playMusic() {
+            if (playing) return;
+            audio.play().then(() => {
+                playing = true;
+                audioControl.style.opacity = "1";
+                removeAutoplayListeners();
+            }).catch(err => {
+                console.log("Autoplay blocked. Awaiting user interaction.", err);
+            });
+        }
+
+        function pauseMusic() {
+            audio.pause();
+            playing = false;
+            audioControl.style.opacity = "0.5";
+        }
+
+        function startAudio() {
+            playMusic();
+        }
+
+        audioControl.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (playing) {
+                pauseMusic();
+            } else {
+                playMusic();
+            }
+        });
+
+        // Smart Autoplay Listeners
+        const autoplayEvents = ['click', 'touchstart', 'scroll', 'keydown'];
+        function handleAutoplay() {
+            playMusic();
+        }
+        function addAutoplayListeners() {
+            autoplayEvents.forEach(event => {
+                document.addEventListener(event, handleAutoplay, { passive: true });
+            });
+        }
+        function removeAutoplayListeners() {
+            autoplayEvents.forEach(event => {
+                document.removeEventListener(event, handleAutoplay);
+            });
+        }
+
+        // Try playing immediately
+        window.addEventListener('load', () => {
+            addAutoplayListeners();
+            playMusic();
         });
 
         // Nav Progress

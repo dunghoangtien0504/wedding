@@ -291,6 +291,14 @@
             display: flex; align-items: center; justify-content: center;
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        #music-toggle.playing {
+            animation: spin 6s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         @media (min-width: 561px) {
@@ -317,7 +325,7 @@
     <div id="music-toggle">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-ink)" stroke-width="2"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
         <audio id="bg-music" loop>
-            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
+            <source src="music.mp3" type="audio/mpeg">
         </audio>
     </div>
 
@@ -523,17 +531,54 @@
         const audio = document.getElementById('bg-music');
         let isPlaying = false;
 
-        musicToggle.addEventListener('click', () => {
-            if (isPlaying) {
-                audio.pause();
-                musicToggle.style.opacity = "0.5";
-            } else {
-                audio.play().catch(() => {
-                    alert("Vui lòng tương tác với trang để phát nhạc.");
-                });
+        function playMusic() {
+            if (isPlaying) return;
+            audio.play().then(() => {
+                isPlaying = true;
                 musicToggle.style.opacity = "1";
+                musicToggle.classList.add('playing');
+                removeAutoplayListeners();
+            }).catch(err => {
+                console.log("Autoplay blocked by browser. Awaiting user interaction.", err);
+            });
+        }
+
+        function pauseMusic() {
+            audio.pause();
+            isPlaying = false;
+            musicToggle.style.opacity = "0.5";
+            musicToggle.classList.remove('playing');
+        }
+
+        musicToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (isPlaying) {
+                pauseMusic();
+            } else {
+                playMusic();
             }
-            isPlaying = !isPlaying;
+        });
+
+        // Smart Autoplay Listeners
+        const autoplayEvents = ['click', 'touchstart', 'scroll', 'keydown'];
+        function handleAutoplay() {
+            playMusic();
+        }
+        function addAutoplayListeners() {
+            autoplayEvents.forEach(event => {
+                document.addEventListener(event, handleAutoplay, { passive: true });
+            });
+        }
+        function removeAutoplayListeners() {
+            autoplayEvents.forEach(event => {
+                document.removeEventListener(event, handleAutoplay);
+            });
+        }
+
+        // Try playing immediately
+        window.addEventListener('load', () => {
+            addAutoplayListeners();
+            playMusic();
         });
 
         // RSVP Form Simple Handler

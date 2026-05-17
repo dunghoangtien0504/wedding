@@ -1965,7 +1965,7 @@ footer .footer-bow {
     <div class="eq-bars"><span></span><span></span><span></span></div>
     <span class="music-lbl">Music</span>
     <audio id="bg-music" loop>
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+        <source src="music.mp3" type="audio/mpeg">
     </audio>
 </div>
 
@@ -2452,17 +2452,58 @@ window.addEventListener('load', () => {
     loop();
 })();
 
-// ═══ Music ═══
+// ═══ Music & Smart Autoplay ═══
 const player = document.getElementById('music');
 const audio  = document.getElementById('bg-music');
 let on = false;
-const togglePlay = () => {
-    if (on) { audio.pause(); player.classList.remove('on'); }
-    else    { audio.play().catch(()=>{}); player.classList.add('on'); }
-    on = !on;
+
+function playMusic() {
+    if (on) return;
+    audio.play().then(() => {
+        on = true;
+        player.classList.add('on');
+        removeAutoplayListeners();
+    }).catch(err => {
+        console.log("Autoplay blocked. Awaiting user interaction.", err);
+    });
+}
+
+function pauseMusic() {
+    audio.pause();
+    on = false;
+    player.classList.remove('on');
+}
+
+const togglePlay = (e) => {
+    if (e) e.stopPropagation();
+    if (on) pauseMusic();
+    else    playMusic();
 };
+
 player.addEventListener('click', togglePlay);
-player.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') { e.preventDefault(); togglePlay(); } });
+player.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') { e.preventDefault(); togglePlay(e); } });
+
+// Smart Autoplay Listeners
+const autoplayEvents = ['click', 'touchstart', 'scroll', 'keydown'];
+function handleAutoplay() {
+    playMusic();
+}
+function addAutoplayListeners() {
+    autoplayEvents.forEach(event => {
+        document.addEventListener(event, handleAutoplay, { passive: true });
+    });
+}
+function removeAutoplayListeners() {
+    autoplayEvents.forEach(event => {
+        document.removeEventListener(event, handleAutoplay);
+    });
+}
+
+// Try playing immediately
+window.addEventListener('load', () => {
+    addAutoplayListeners();
+    playMusic();
+});
 
 // ═══ Scroll progress + parallax + reveal ═══
 const io = new IntersectionObserver(entries => {
