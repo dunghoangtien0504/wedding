@@ -2576,34 +2576,61 @@ if (lb && lbImg) {
     });
 }
 
-// ═══ RSVP — localStorage ═══
-// XEM dữ liệu: F12 → Console → JSON.parse(localStorage.getItem('rsvp_list'))
+// ═══ RSVP — Google Sheets & localStorage ═══
+// Thay thế đường link Web App của Google Sheets của bạn vào biến dưới đây:
+const GOOGLE_SHEET_WEBAPP_URL = 'YOUR_GOOGLE_SHEET_WEBAPP_URL';
+
 document.getElementById('rsvpForm').addEventListener('submit', e => {
     e.preventDefault();
     const btn = e.target.querySelector('button');
     btn.textContent = 'ĐANG GỬI…'; btn.disabled = true;
+    
     const entry = {
         name:    document.getElementById('name').value.trim(),
         side:    document.getElementById('side').value,
         guests:  document.getElementById('guests').value,
         attend:  document.getElementById('attend').value,
         message: document.getElementById('message').value.trim(),
-        at:      new Date().toISOString()
+        at:      new Date().toLocaleString('vi-VN')
     };
+
+    // 1. Lưu dự phòng tại LocalStorage của trình duyệt khách
     try {
         const list = JSON.parse(localStorage.getItem('rsvp_list') || '[]');
         list.push(entry);
         localStorage.setItem('rsvp_list', JSON.stringify(list));
-        console.log('✓ RSVP saved:', entry);
-        console.log('Tổng:', list.length, '— xem hết: JSON.parse(localStorage.getItem("rsvp_list"))');
     } catch (err) { console.error(err); }
-    setTimeout(() => {
+
+    // 2. Gửi đồng bộ lên Google Sheets trực tuyến
+    if (GOOGLE_SHEET_WEBAPP_URL && GOOGLE_SHEET_WEBAPP_URL !== 'YOUR_GOOGLE_SHEET_WEBAPP_URL') {
+        const formData = new FormData();
+        for (const key in entry) {
+            formData.append(key, entry[key]);
+        }
+        
+        fetch(GOOGLE_SHEET_WEBAPP_URL, {
+            method: 'POST',
+            body: formData,
+            mode: 'no-cors'
+        })
+        .then(() => {
+            handleSuccess();
+        })
+        .catch(err => {
+            console.error('Lỗi gửi Sheets:', err);
+            handleSuccess(); // Vẫn hoàn tất hiệu ứng gửi thành công để tránh kẹt giao diện khách
+        });
+    } else {
+        setTimeout(handleSuccess, 1000);
+    }
+
+    function handleSuccess() {
         btn.textContent = '✓ ĐÃ GỬI THÀNH CÔNG';
         btn.style.background = 'var(--gold-light)';
         btn.style.color = 'var(--wine-dark)';
         e.target.reset();
         burst();
-    }, 1200);
+    }
 });
 
 // ═══ Canvas: floating petals + sparkles + confetti ═══
