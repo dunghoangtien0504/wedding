@@ -1,0 +1,5 @@
+.claude/
+.tempmediaStorage/
+*.png
+*.webp
+*.log

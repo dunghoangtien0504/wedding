@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Sovereign Union — Tuấn Việt & Nhật Hường</title>
+    
+    <!-- Premium Assets -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Italiana&family=Inter+Tight:wght@100;200;300;400;500&family=Pinyon+Script&display=swap" rel="stylesheet">
+    
+    <!-- GSAP for World-Class Motion -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
+
+    <style>
+        :root {
+            --bg: #FBF8F3;
+            --accent: #A8843A;
+            --ink: #1B1410;
+            --paper: #FFFFFF;
+            --gold-gradient: linear-gradient(135deg, #A8843A 0%, #D9B96B 50%, #A8843A 100%);
+            
+            --font-display: 'Italiana', serif;
+            --font-serif: 'Cormorant+Garamond', serif;
+            --font-body: 'Inter Tight', sans-serif;
+            --font-script: 'Pinyon Script', cursive;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+        
+        body {
+            background-color: var(--bg);
+            color: var(--ink);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+            cursor: none; /* Custom cursor */
+        }
+
+        /* ─── Custom Cursor ─── */
+        #cursor {
+            position: fixed; width: 8px; height: 8px; background: var(--accent);
+            border-radius: 50%; pointer-events: none; z-index: 10000;
+            transition: transform 0.1s;
+        }
+        #cursor-follower {
+            position: fixed; width: 40px; height: 40px; border: 1px solid var(--accent);
+            border-radius: 50%; pointer-events: none; z-index: 9999;
+            transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        /* ─── Curtain Opening ─── */
+        #intro-curtain {
+            position: fixed; inset: 0; z-index: 1000;
+            background: var(--bg);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .curtain-logo {
+            width: 150px; opacity: 0; transform: scale(0.8);
+            animation: logoFade 2s forwards 0.5s;
+        }
+        @keyframes logoFade { to { opacity: 1; transform: scale(1); } }
+
+        /* ─── Layout ─── */
+        .page-wrapper { width: 100%; position: relative; }
+        
+        section {
+            min-height: 100vh;
+            width: 100%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10vw 5vw;
+        }
+
+        /* ─── Typography ─── */
+        .h1-sovereign {
+            font-family: var(--font-display);
+            font-size: clamp(80px, 18vw, 240px);
+            line-height: 0.8;
+            text-transform: uppercase;
+            letter-spacing: -0.05em;
+        }
+        .h2-editorial {
+            font-family: var(--font-display);
+            font-size: clamp(40px, 8vw, 100px);
+            line-height: 1;
+            margin-bottom: 24px;
+        }
+        .p-elegant {
+            font-family: var(--font-serif);
+            font-size: clamp(18px, 2vw, 26px);
+            line-height: 1.6;
+            max-width: 600px;
+            color: var(--ink);
+            opacity: 0.8;
+        }
+        .eyebrow {
+            font-size: 11px; text-transform: uppercase; letter-spacing: 0.6em;
+            color: var(--accent); display: block; margin-bottom: 24px;
+        }
+
+        /* ─── Hero Section ─── */
+        .hero { overflow: hidden; padding: 0; }
+        .hero-bg {
+            position: absolute; inset: 0; z-index: 1;
+            clip-path: inset(0 0 0 0);
+        }
+        .hero-bg img {
+            width: 100%; height: 110%; object-fit: cover;
+            object-position: center 25%;
+            filter: brightness(1.05);
+        }
+        .hero-content {
+            position: relative; z-index: 10;
+            height: 100%; width: 100%;
+            display: flex; flex-direction: column; justify-content: flex-end;
+            padding: 5vh 5vw;
+        }
+        .hero-name-grid {
+            display: grid; grid-template-columns: 1fr; gap: 2vh;
+        }
+
+        /* ─── Photo Wall (The Art Exhibition) ─── */
+        .photo-wall {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        .photo-item {
+            position: relative; overflow: hidden;
+            background: #eee;
+        }
+        .photo-item img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 1.5s var(--ease);
+        }
+        .photo-item:hover img { transform: scale(1.05); }
+
+        /* Masonry-like positions */
+        .p1 { grid-column: 1 / 7; aspect-ratio: 4/5; }
+        .p2 { grid-column: 7 / 13; aspect-ratio: 3/2; margin-top: 100px; }
+        .p3 { grid-column: 1 / 5; aspect-ratio: 1; margin-top: -100px; }
+        .p4 { grid-column: 5 / 9; aspect-ratio: 3/4; }
+        .p5 { grid-column: 9 / 13; aspect-ratio: 1; }
+        .p6 { grid-column: 1 / 8; aspect-ratio: 16/9; }
+        .p7 { grid-column: 8 / 13; aspect-ratio: 4/5; margin-top: -50px; }
+        .p8 { grid-column: 1 / 6; aspect-ratio: 4/5; }
+        .p9 { grid-column: 6 / 13; aspect-ratio: 3/2; }
+
+        /* ─── Interactive Details ─── */
+        .details-card {
+            background: white;
+            padding: 100px 60px;
+            position: relative;
+            text-align: center;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.03);
+            border: 1px solid rgba(168,132,58,0.1);
+        }
+        .details-card::before {
+            content: ""; position: absolute; inset: 20px; border: 1px solid var(--accent); opacity: 0.2;
+        }
+
+        /* ─── RSVP Letter ─── */
+        .rsvp-letter {
+            max-width: 600px; margin: 0 auto;
+            background: #fff; padding: 60px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.05);
+            transform: rotate(-1deg);
+        }
+
+        /* ─── UI ─── */
+        #audio-control {
+            position: fixed; top: 40px; right: 40px; z-index: 1000;
+            background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);
+            padding: 10px 20px; border-radius: 30px; border: 1px solid var(--accent);
+            display: flex; align-items: center; gap: 10px; cursor: pointer;
+        }
+        .progress-nav {
+            position: fixed; left: 40px; top: 50%; transform: translateY(-50%);
+            display: flex; flex-direction: column; gap: 20px; z-index: 1000;
+        }
+        .nav-dot {
+            width: 6px; height: 6px; border: 1px solid var(--ink); border-radius: 50%;
+            transition: 0.3s; cursor: pointer;
+        }
+        .nav-dot.active { background: var(--accent); border-color: var(--accent); transform: scale(1.5); }
+
+        @media (max-width: 768px) {
+            .h1-sovereign { font-size: 80px; }
+            .photo-wall { grid-template-columns: 1fr; }
+            .p1, .p2, .p3, .p4, .p5, .p6, .p7, .p8, .p9 { grid-column: 1 / 2; margin: 0; }
+            .details-card { padding: 60px 20px; }
+            #cursor, #cursor-follower { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- CUSTOM CURSOR -->
+    <div id="cursor"></div>
+    <div id="cursor-follower"></div>
+
+    <!-- INTRO CURTAIN -->
+    <div id="intro-curtain" onclick="openWedding()">
+        <img src="luxury_wedding_monogram_gold_1778956760651.png" class="curtain-logo">
+        <p class="eyebrow" style="margin-top: 40px; animation: pulse 2s infinite;">Click to reveal the story</p>
+    </div>
+
+    <!-- UI -->
+    <div id="audio-control">
+        <span style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.2em;">Play Soundtrack</span>
+        <audio id="bg-audio" loop><source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"></audio>
+    </div>
+
+    <div class="progress-nav">
+        <div class="nav-dot active" data-sec="hero"></div>
+        <div class="nav-dot" data-sec="story"></div>
+        <div class="nav-dot" data-sec="gallery"></div>
+        <div class="nav-dot" data-sec="details"></div>
+        <div class="nav-dot" data-sec="rsvp"></div>
+    </div>
+
+    <div class="page-wrapper">
+        
+        <!-- HERO -->
+        <section class="hero" id="hero">
+            <div class="hero-bg">
+                <img src="z7831680584353_b215847692dbe1ed1f863b6463b32370.jpg" alt="Hoàng Tuấn Việt">
+            </div>
+            <div class="hero-content">
+                <span class="eyebrow" style="color: white; margin-bottom: 0;">Wedding Invitation</span>
+                <div class="hero-name-grid">
+                    <h1 class="h1-sovereign" style="color: white; text-align: left;">TUẤN VIỆT</h1>
+                    <h1 class="h1-sovereign" style="color: white; text-align: right;">NHẬT HƯỜNG</h1>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 40px;">
+                    <span class="eyebrow" style="color: white;">26 . 05 . 2026</span>
+                    <span class="script" style="color: var(--accent); font-size: 40px;">Save the date</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- STORY -->
+        <section id="story">
+            <div style="max-width: 1200px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;">
+                <div class="reveal-img" style="aspect-ratio: 4/5; overflow: hidden;">
+                    <img src="z7831680548260_f8db374fac82a96a265e9779b94f1b68.jpg" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div>
+                    <span class="eyebrow">Our Beginning</span>
+                    <h2 class="h2-editorial">Duyên là do trời định, <br><span style="font-style: italic; color: var(--accent);">Phận là do người tạo.</span></h2>
+                    <p class="p-elegant">
+                        Hành trình từ những người xa lạ đến một nửa không thể thiếu. Chúng mình tin rằng mỗi khoảnh khắc trôi qua đều là một sự sắp đặt tuyệt vời của số phận để chúng mình tìm thấy nhau giữa hàng tỷ người.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- GALLERY EXHIBITION -->
+        <section id="gallery" style="background: #fff; padding: 15vh 5vw;">
+            <div style="width: 100%;">
+                <div style="text-align: center; margin-bottom: 100px;">
+                    <span class="eyebrow">Art Exhibition</span>
+                    <h2 class="h2-editorial">The Art of <span style="font-style: italic;">Us</span></h2>
+                </div>
+                
+                <div class="photo-wall">
+                    <div class="photo-item p1"><img src="z7831680548260_f8db374fac82a96a265e9779b94f1b68.jpg"></div>
+                    <div class="photo-item p2"><img src="z7831680552805_9abe610ea8ce6559422e80b18c1d71ed.jpg"></div>
+                    <div class="photo-item p3"><img src="z7831680566361_95a3295b63dab3d9a8555235dc5eebb4.jpg"></div>
+                    <div class="photo-item p4"><img src="z7831680570876_7fb356e8c79e1db11af2a690c6901b8a.jpg"></div>
+                    <div class="photo-item p5"><img src="z7831680575281_c41ad487f69dbe57786f6649b3147bac.jpg"></div>
+                    <div class="photo-item p6"><img src="z7831680598432_8472098bc5201428992677409f1726fe.jpg"></div>
+                    <div class="photo-item p7"><img src="z7831680592450_6258fc75ed3cc14ba570ee580e504f03.jpg"></div>
+                    <div class="photo-item p8"><img src="z7831680584353_b215847692dbe1ed1f863b6463b32370.jpg"></div>
+                    <div class="photo-item p9"><img src="z7831680585225_e56e44c46d9f7d30eeac0a5c717fb6b5.jpg"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DETAILS -->
+        <section id="details">
+            <div class="details-card">
+                <span class="eyebrow">The Celebration</span>
+                <h2 class="h2-editorial" style="font-size: 80px;">26 . 05 . 2026</h2>
+                <div style="height: 1px; width: 100px; background: var(--accent); margin: 40px auto;"></div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; text-align: left; max-width: 800px; margin: 0 auto;">
+                    <div>
+                        <span class="eyebrow" style="font-size: 8px;">Time</span>
+                        <p class="p-elegant" style="font-size: 24px; font-weight: 500;">10:30 AM</p>
+                        <p style="font-size: 13px; opacity: 0.6; margin-top: 10px;">Thứ Ba (Nhằm ngày 10/04 Âm Lịch)</p>
+                    </div>
+                    <div>
+                        <span class="eyebrow" style="font-size: 8px;">Location</span>
+                        <p class="p-elegant" style="font-size: 24px; font-weight: 500;">Nhà hàng Hưng Mắm</p>
+                        <p style="font-size: 13px; opacity: 0.6; margin-top: 10px;">KĐT Hà Phương, Thanh Miện, Hải Dương</p>
+                        <a href="https://maps.app.goo.gl/UQ85fUjQBrupLXq48" target="_blank" style="display: inline-block; margin-top: 20px; color: var(--accent); text-decoration: none; border-bottom: 1px solid;">Google Maps</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RSVP -->
+        <section id="rsvp" style="background: var(--champagne);">
+            <div class="rsvp-letter">
+                <h2 class="h2-editorial" style="text-align: center;">R.S.V.P</h2>
+                <p class="p-elegant" style="text-align: center; margin-bottom: 40px;">Sự hiện diện của quý vị là món quà ý nghĩa nhất đối với gia đình chúng tôi.</p>
+                <form>
+                    <input type="text" placeholder="Your Full Name" style="width: 100%; padding: 20px; border: none; border-bottom: 1px solid var(--accent); outline: none; font-size: 20px; font-family: var(--font-serif); font-style: italic; margin-bottom: 30px;">
+                    <button type="submit" style="width: 100%; padding: 25px; background: var(--ink); color: white; border: none; font-size: 11px; letter-spacing: 0.5em; text-transform: uppercase; cursor: pointer;">Confirm Attendance</button>
+                </form>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        // Lenis Smooth Scroll
+        const lenis = new Lenis();
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+
+        // GSAP Animations
+        gsap.registerPlugin(ScrollTrigger);
+
+        function openWedding() {
+            const tl = gsap.timeline();
+            tl.to("#intro-curtain", { yPercent: -100, duration: 1.5, ease: "expo.inOut" });
+            tl.from(".h1-sovereign", { y: 200, stagger: 0.2, duration: 1.5, ease: "expo.out" }, "-=0.5");
+            tl.from(".hero-bg img", { scale: 1.5, duration: 2, ease: "expo.out" }, "-=1.5");
+            
+            document.body.style.overflow = "auto";
+            startAudio();
+        }
+
+        // Parallax & Reveal
+        gsap.to(".hero-bg img", {
+            yPercent: 20,
+            ease: "none",
+            scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom top", scrub: true }
+        });
+
+        gsap.utils.toArray(".photo-item").forEach(item => {
+            gsap.from(item, {
+                y: 100, opacity: 0,
+                scrollTrigger: { trigger: item, start: "top 90%", toggleActions: "play none none reverse" }
+            });
+        });
+
+        // Custom Cursor
+        const cursor = document.getElementById('cursor');
+        const follower = document.getElementById('cursor-follower');
+        window.addEventListener('mousemove', e => {
+            gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1 });
+            gsap.to(follower, { x: e.clientX - 16, y: e.clientY - 16, duration: 0.3 });
+        });
+
+        // Audio
+        let playing = false;
+        const audio = document.getElementById('bg-audio');
+        function startAudio() { audio.play(); playing = true; }
+        document.getElementById('audio-control').addEventListener('click', () => {
+            if (playing) audio.pause(); else audio.play();
+            playing = !playing;
+        });
+
+        // Nav Progress
+        const dots = document.querySelectorAll('.nav-dot');
+        const sections = ['hero', 'story', 'gallery', 'details', 'rsvp'];
+        window.addEventListener('scroll', () => {
+            let current = "";
+            sections.forEach(s => {
+                const el = document.getElementById(s);
+                if (window.pageYOffset >= el.offsetTop - 300) current = s;
+            });
+            dots.forEach(d => {
+                d.classList.toggle('active', d.dataset.sec === current);
+            });
+        });
+    </script>
+</body>
+</html>
