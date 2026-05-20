@@ -2610,8 +2610,7 @@ if (lb && lbImg) {
 }
 
 // ═══ RSVP — Google Forms & localStorage ═══
-// CẤU HÌNH ĐƯỜNG DẪN GOOGLE FORM CỦA BẠN (Thay ID dưới đây bằng ID Google Form của bạn)
-const GOOGLE_FORM_URL = 'https://docs.google.com/forms/u/0/d/e/YOUR_GOOGLE_FORM_ID/formResponse';
+const GOOGLE_FORM_URL = 'https://docs.google.com/forms/u/0/d/e/1FAIpQLSeOGlsTYtFeRyyfyYypfi3OMedFSUqwDIDblCFB65g2D8E3Kg/formResponse';
 
 document.getElementById('rsvpForm').addEventListener('submit', e => {
     e.preventDefault();
@@ -2634,33 +2633,25 @@ document.getElementById('rsvpForm').addEventListener('submit', e => {
         localStorage.setItem('rsvp_list', JSON.stringify(list));
     } catch (err) { console.error(err); }
 
-    // 2. Gửi đồng bộ lên Google Forms (Nhập ngầm dưới nền)
-    if (GOOGLE_FORM_URL && GOOGLE_FORM_URL.indexOf('YOUR_GOOGLE_FORM_ID') === -1) {
-        const formData = new FormData();
-        
-        // BẠN HÃY THAY THẾ CÁC MÃ SỐ 'entry.12345678' DƯỚI ĐÂY THÀNH MÃ CÂU HỎI THẬT CỦA GOOGLE FORM
-        formData.append('entry.12345678', entry.name);     // Ví dụ: mã câu hỏi Họ và tên
-        formData.append('entry.87654321', entry.side);     // Ví dụ: mã câu hỏi Khách của (groom/bride)
-        formData.append('entry.11111111', entry.guests);   // Ví dụ: mã câu hỏi Số người tham dự
-        formData.append('entry.22222222', entry.attend);   // Ví dụ: mã câu hỏi Xác nhận tham dự
-        formData.append('entry.33333333', entry.message);  // Ví dụ: mã câu hỏi Lời chúc
-        
-        fetch(GOOGLE_FORM_URL, {
-            method: 'POST',
-            body: formData,
-            mode: 'no-cors' // Quan trọng để tránh lỗi chặn CORS
-        })
-        .then(() => {
-            handleSuccess();
-        })
-        .catch(err => {
-            console.error('Lỗi gửi Google Form:', err);
-            handleSuccess(); // Vẫn chạy pháo hoa để không kẹt giao diện khách
-        });
-    } else {
-        // Nếu chưa cấu hình Google Form thật, giả lập gửi thành công sau 1 giây
-        setTimeout(handleSuccess, 1000);
-    }
+    // 2. Gửi ngầm lên Google Forms
+    const formData = new FormData();
+    formData.append('entry.608220398', entry.name);    // Họ và tên
+    formData.append('entry.760753259', entry.side);    // Khách của
+    formData.append('entry.300376418', entry.guests);  // Số người tham dự
+    formData.append('entry.368554267', entry.attend);  // Xác nhận
+    
+    fetch(GOOGLE_FORM_URL, {
+        method: 'POST',
+        body: formData,
+        mode: 'no-cors'
+    })
+    .then(() => {
+        handleSuccess();
+    })
+    .catch(err => {
+        console.error('Lỗi gửi Google Form:', err);
+        handleSuccess();
+    });
 
     function handleSuccess() {
         btn.textContent = '✓ ĐÃ GỬI THÀNH CÔNG';
