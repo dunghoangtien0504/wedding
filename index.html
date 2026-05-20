@@ -2622,9 +2622,9 @@ if (lb && lbImg) {
     });
 }
 
-// ═══ RSVP — Google Sheets & localStorage ═══
-// Thay thế đường link Web App của Google Sheets của bạn vào biến dưới đây:
-const GOOGLE_SHEET_WEBAPP_URL = 'YOUR_GOOGLE_SHEET_WEBAPP_URL';
+// ═══ RSVP — Google Forms & localStorage ═══
+// CẤU HÌNH ĐƯỜNG DẪN GOOGLE FORM CỦA BẠN (Thay ID dưới đây bằng ID Google Form của bạn)
+const GOOGLE_FORM_URL = 'https://docs.google.com/forms/u/0/d/e/YOUR_GOOGLE_FORM_ID/formResponse';
 
 document.getElementById('rsvpForm').addEventListener('submit', e => {
     e.preventDefault();
@@ -2647,26 +2647,31 @@ document.getElementById('rsvpForm').addEventListener('submit', e => {
         localStorage.setItem('rsvp_list', JSON.stringify(list));
     } catch (err) { console.error(err); }
 
-    // 2. Gửi đồng bộ lên Google Sheets trực tuyến
-    if (GOOGLE_SHEET_WEBAPP_URL && GOOGLE_SHEET_WEBAPP_URL !== 'YOUR_GOOGLE_SHEET_WEBAPP_URL') {
+    // 2. Gửi đồng bộ lên Google Forms (Nhập ngầm dưới nền)
+    if (GOOGLE_FORM_URL && GOOGLE_FORM_URL.indexOf('YOUR_GOOGLE_FORM_ID') === -1) {
         const formData = new FormData();
-        for (const key in entry) {
-            formData.append(key, entry[key]);
-        }
         
-        fetch(GOOGLE_SHEET_WEBAPP_URL, {
+        // BẠN HÃY THAY THẾ CÁC MÃ SỐ 'entry.12345678' DƯỚI ĐÂY THÀNH MÃ CÂU HỎI THẬT CỦA GOOGLE FORM
+        formData.append('entry.12345678', entry.name);     // Ví dụ: mã câu hỏi Họ và tên
+        formData.append('entry.87654321', entry.side);     // Ví dụ: mã câu hỏi Khách của (groom/bride)
+        formData.append('entry.11111111', entry.guests);   // Ví dụ: mã câu hỏi Số người tham dự
+        formData.append('entry.22222222', entry.attend);   // Ví dụ: mã câu hỏi Xác nhận tham dự
+        formData.append('entry.33333333', entry.message);  // Ví dụ: mã câu hỏi Lời chúc
+        
+        fetch(GOOGLE_FORM_URL, {
             method: 'POST',
             body: formData,
-            mode: 'no-cors'
+            mode: 'no-cors' // Quan trọng để tránh lỗi chặn CORS
         })
         .then(() => {
             handleSuccess();
         })
         .catch(err => {
-            console.error('Lỗi gửi Sheets:', err);
-            handleSuccess(); // Vẫn hoàn tất hiệu ứng gửi thành công để tránh kẹt giao diện khách
+            console.error('Lỗi gửi Google Form:', err);
+            handleSuccess(); // Vẫn chạy pháo hoa để không kẹt giao diện khách
         });
     } else {
+        // Nếu chưa cấu hình Google Form thật, giả lập gửi thành công sau 1 giây
         setTimeout(handleSuccess, 1000);
     }
 
