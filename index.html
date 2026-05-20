@@ -2634,9 +2634,14 @@ document.getElementById('rsvpForm').addEventListener('submit', e => {
     } catch (err) { console.error(err); }
 
     // 2. Gửi ngầm lên Google Forms
+    const sideMap = {
+        'groom': 'Chú rể Tuấn Việt',
+        'bride': 'Cô dâu Nhật Hường'
+    };
+
     const formData = new FormData();
     formData.append('entry.608220398', entry.name);    // Họ và tên
-    formData.append('entry.760753259', entry.side);    // Khách của
+    formData.append('entry.760753259', sideMap[entry.side] || entry.side); // Khách của
     formData.append('entry.300376418', entry.guests);  // Số người tham dự
     formData.append('entry.368554267', entry.attend);  // Xác nhận
     formData.append('entry.144272955', entry.message); // Lời chúc
