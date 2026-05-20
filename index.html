@@ -1844,17 +1844,18 @@ footer .footer-bow {
         left: 50%;
         right: auto;
         top: auto;
-        bottom: 35px;
+        bottom: 145px;
         transform: translateX(-50%) rotate(10deg);
-        width: 76px;
-        height: 76px;
+        width: 72px;
+        height: 72px;
+        z-index: 9;
     }
     .rsvp-text {
         font-size: 7px;
     }
     .rsvp-flowers {
-        width: 30px;
-        height: 12px;
+        width: 28px;
+        height: 10px;
     }
     .inv-polaroids {
         right: 0px;
@@ -2525,7 +2526,13 @@ window.addEventListener('scroll', () => {
     const h = document.documentElement.scrollHeight - innerHeight;
     progress.style.width = (y / h * 100) + '%';
 
-    if (heroPic && y < innerHeight) heroPic.style.transform = `translateY(${y * 0.28}px) scale(1.06)`;
+    if (heroPic) {
+        if (y < innerHeight && window.innerWidth > 900) {
+            heroPic.style.transform = `translateY(${y * 0.28}px) scale(1.06)`;
+        } else {
+            heroPic.style.transform = '';
+        }
+    }
 
     bannerImgs.forEach(b => {
         const rect = b.getBoundingClientRect();
